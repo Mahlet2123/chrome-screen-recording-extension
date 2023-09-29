@@ -20,15 +20,15 @@ The project is organized into two main directories:
 
 - Activate the virtual environment:
 
-	pipenv shell
+	`pipenv shell`
 
-- Install the required Python packages:
+- Install the required Python packages listed in `requirements.txt` into your virtual environment:
 
-	pipenv install
+	`pipenv install -r requirements.txt`
 
 - Start the Django development server:
 
-	python manage.py runserver
+	`python manage.py runserver`
 
 - Your Django backend should now be running locally at http://localhost:8000/.
 
@@ -38,4 +38,4 @@ Make sure you have Node.js and npm (Node Package Manager) installed on your syst
 
 Navigate to the frontend directory:
 
-	cd frontend
+	`cd frontend`
