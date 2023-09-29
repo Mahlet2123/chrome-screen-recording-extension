@@ -53,9 +53,8 @@ The base URL for all API endpoints is `https://example.com/api/`.
 
 ## Additional Formats
 
-You can request API responses in different formats (e.g., JSON, XML) by specifying the format in the URL. Here are the URL patterns for different formats:
+You can request API responses in different formats (e.g., JSON) by specifying the format in the URL. Here are the URL patterns for different formats:
 
 - JSON Format: `/api/videos.json`
-- XML Format: `/api/videos.xml`
 
 ---
