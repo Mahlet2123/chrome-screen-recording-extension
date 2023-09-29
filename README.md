@@ -1,2 +1,3 @@
 # screen-recording-app-react-django
-This repository houses the codebase for a screen recording and sharing application built with React (frontend) and Django (backend). The application allows users to effortlessly record their screens and share the captured content seamlessly. 
+
+This repository contains the codebase for a Chrome Extension designed to capture and share screen recordings seamlessly. The frontend is built with React, providing an intuitive user interface for initiating and managing screen recordings. On the backend, Django handles video storage and presentation.
