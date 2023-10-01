@@ -1,28 +1,56 @@
-from rest_framework import viewsets, status
-from rest_framework.decorators import api_view
-from rest_framework.response import Response
-from .models import VideoRecording
-from .serializers import VideoRecordingSerializer
+import uuid
+import time
+from django.http import JsonResponse
+from django.views import View
+from .models import Video
+import os
+from django.conf import settings
 
-class VideoRecordingViewSet(viewsets.ModelViewSet):
-    queryset = VideoRecording.objects.all()
-    serializer_class = VideoRecordingSerializer
+class CreateVideoView(View):
+    def post(self, request):
+        # Generate a unique video ID using UUID
+        video_id = uuid.uuid4()
+        # Create a new Video object with the generated ID
+        Video.objects.create(video_id=video_id)
+        return JsonResponse({'video_id': str(video_id)})
+
+class AddDataView(View):
+    def post(self, request, video_id):
+        try:
+            video = Video.objects.get(video_id=video_id)
+        except Video.DoesNotExist:
+            return JsonResponse({'error': 'Video not found'})
+
+        data_chunk = request.body
+        video_file_path = os.path.join(settings.MEDIA_ROOT, str(video.video_file))
+        with open(video_file_path, 'ab') as video_file:
+            video_file.write(data_chunk)
+
+        return JsonResponse({'message': 'Data added successfully'})
 
 
-"""@api_view(['POST'])
-def upload_video(request):
-    serializer = VideoRecordingSerializer(data=request.data)
-    if serializer.is_valid():
-        serializer.save()
-        return Response({'message': 'Video uploaded successfully'}, status=status.HTTP_201_CREATED)
-    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+class CompleteJobView(View):
+    def post(self, request, video_id):
+        try:
+            video = Video.objects.get(video_id=video_id)
+        except Video.DoesNotExist:
+            return JsonResponse({'error': 'Video not found'})
 
-@api_view(['GET'])
-def view_video(request, video_id):
-    try:
-        video = VideoRecording.objects.get(pk=video_id)
-        serializer = VideoRecordingSerializer(video)
-        return Response(serializer.data)
-    except VideoRecording.DoesNotExist:
-        return Response({'error': 'Video not found'}, status=status.HTTP_404_NOT_FOUND)
-"""
+        # Mark the video as 'processing' or do any necessary processing here
+        video.status = 'processing'
+        video.save()
+        # In a real system, you would handle encoding and other processing steps here.
+        # For simplicity, we'll just mark it as 'complete' after a brief delay.
+        time.sleep(5)  # Simulate processing time
+        video.status = 'complete'
+        video.save()
+        return JsonResponse({'message': 'Job completed successfully'})
+    
+class CheckStatusView(View):
+    def get(self, request, video_id):
+        try:
+            video = Video.objects.get(video_id=video_id)
+        except Video.DoesNotExist:
+            return JsonResponse({'error': 'Video not found'})
+
+        return JsonResponse({'status': video.status})

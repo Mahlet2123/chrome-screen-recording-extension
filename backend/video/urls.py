@@ -1,13 +1,14 @@
-from django.urls import path, include
-from rest_framework.routers import DefaultRouter
-from . import views
-
-router = DefaultRouter()
-router.register("api/videos", views.VideoRecordingViewSet, "video-recordings")
-
+from django.urls import path
+from .views import CreateVideoView, AddDataView, CompleteJobView, CheckStatusView
+from django.conf import settings
+from django.conf.urls.static import static
 
 urlpatterns = [
-    path('', include(router.urls)),
-    #path('upload/', views.upload_video, name='upload_video'),
-    #path('video/<int:video_id>/', views.view_video, name='view_video'),
+    path('create/', CreateVideoView.as_view(), name='create_video'),
+    path('add_data/<uuid:video_id>/', AddDataView.as_view(), name='add_data'),
+    path('complete_job/<uuid:video_id>/', CompleteJobView.as_view(), name='complete_job'),
+    path('check_status/<uuid:video_id>/', CheckStatusView.as_view(), name='check_status'),
 ]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
