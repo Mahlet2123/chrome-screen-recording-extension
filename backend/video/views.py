@@ -1,6 +1,6 @@
 import uuid
 import time
-from django.http import JsonResponse
+from django.http import JsonResponse, FileResponse
 from django.views import View
 from .models import Video
 import os
@@ -26,6 +26,8 @@ class AddDataView(View):
 
         data_chunk = request.body
         video_file_path = os.path.join(settings.MEDIA_ROOT, str(video.video_file))
+        # appends binary data chunks to a file. so to create a complete video file,
+        # you would need to follow a specific video encoding format and structure.
         with open(video_file_path, 'ab') as video_file:
             video_file.write(data_chunk)
 
@@ -58,3 +60,15 @@ class CheckStatusView(View):
             return JsonResponse({'error': 'Video not found'})
 
         return JsonResponse({'status': video.status})
+    
+class VideoView(View):
+    def get(self, request, video_id):
+        try:
+            video = Video.objects.get(video_id=video_id)
+            video_path = video.video_file.path
+        except Video.DoesNotExist:
+            return JsonResponse({'error': 'Video not found'})
+        
+        response = FileResponse(open(video_path, 'rb'), content_type='video/mp4')
+        # Adjust the content type as needed
+        return response

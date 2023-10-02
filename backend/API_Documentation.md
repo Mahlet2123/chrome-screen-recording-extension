@@ -4,57 +4,68 @@ This documentation provides details about the endpoints available in the Video R
 
 ## Base URL
 
-The base URL for all API endpoints is `https://example.com/api/`.
+The base URL for all API endpoints is `http://archiflow.pythonanywhere.com/`.
 
 ## Endpoints
 
-### List Video Recordings
+## Create Video
 
-- **URL**: `/api/videos/`
-- **HTTP Method**: GET
-- **Description**: Retrieve a list of all video recordings.
-- **Response**: JSON object containing a list of video recording records.
+- **Endpoint:** `/create/`
+- **HTTP Method:** POST
+- **Description:** Start a new video recording session and obtain a unique video ID for the session.
+- **Request Body:** None
+- **Response:**
+  - Status Code: 200 OK
+  - Body: JSON Object
+    - `video_id` (string): Unique ID for the newly created video session.
 
-### Create a Video Recording
+## Add Data to Video
 
-- **URL**: `/api/videos/`
-- **HTTP Method**: POST
-- **Description**: Upload a new video recording.
-- **Request**: Send a POST request with video data.
-- **Response**: JSON object confirming the successful upload.
+- **Endpoint:** `/add_data/<uuid:video_id>/`
+- **HTTP Method:** POST
+- **Description:** Continuously send video data in chunks to an existing video recording session.
+- **URL Parameter:**
+  - `video_id` (UUID): Unique ID of the video recording session.
+- **Request Body:** Binary video data chunk.
+- **Response:**
+  - Status Code: 200 OK
+  - Body: JSON Object
+    - `message` (string): Confirmation message.
 
-### Retrieve a Video Recording
+## Complete Job
 
-- **URL**: `/api/videos/{pk}/`
-- **HTTP Method**: GET
-- **Description**: Retrieve details of a specific video recording.
-- **Parameters**:
-  - `{pk}` (Path Parameter): The unique identifier of the video recording.
-- **Response**: JSON object containing the details of the requested video recording.
+- **Endpoint:** `/complete_job/<uuid:video_id>/`
+- **HTTP Method:** POST
+- **Description:** Signal the completion of a video recording session and initiate processing.
+- **URL Parameter:**
+  - `video_id` (UUID): Unique ID of the video recording session.
+- **Request Body:** None
+- **Response:**
+  - Status Code: 200 OK
+  - Body: JSON Object
+    - `message` (string): Confirmation message.
 
-### Update a Video Recording
+## Check Video Status
 
-- **URL**: `/api/videos/{pk}/`
-- **HTTP Method**: PUT or PATCH
-- **Description**: Update the details of a specific video recording.
-- **Parameters**:
-  - `{pk}` (Path Parameter): The unique identifier of the video recording.
-- **Request**: Send a PUT or PATCH request with updated video data.
-- **Response**: JSON object confirming the successful update.
+- **Endpoint:** `/check_status/<uuid:video_id>/`
+- **HTTP Method:** GET
+- **Description:** Retrieve the current status of a video recording session.
+- **URL Parameter:**
+  - `video_id` (UUID): Unique ID of the video recording session.
+- **Response:**
+  - Status Code: 200 OK
+  - Body: JSON Object
+    - `status` (string): Current status of the video (e.g., 'recording', 'processing', 'complete').
 
-### Delete a Video Recording
+## Get Videos
 
-- **URL**: `/api/videos/{pk}/`
-- **HTTP Method**: DELETE
-- **Description**: Delete a specific video recording.
-- **Parameters**:
-  - `{pk}` (Path Parameter): The unique identifier of the video recording.
-- **Response**: JSON object confirming the successful deletion.
-
-## Additional Formats
-
-You can request API responses in different formats (e.g., JSON) by specifying the format in the URL. Here are the URL patterns for different formats:
-
-- JSON Format: `/api/videos.json`
+- **Endpoint:** `/video/<uuid:video_id>/`
+- **HTTP Method:** GET
+- **Description:** Retrieve a list of video files stored in the specified directory.
+- **Request Body:** None
+- **Response:**
+  - Status Code: 200 OK
+  - Body: JSON Object
+    - `completed_videos` (array of strings): List of completed video file names.
 
 ---
