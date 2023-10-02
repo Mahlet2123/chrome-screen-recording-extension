@@ -5,9 +5,9 @@ from django.views import View
 from .models import Video
 import os
 from django.conf import settings
-from django.views.decorators.csrf import csrf_exempt
 
-@csrf_exempt
+
+
 class CreateVideoView(View):
     def post(self, request):
         # Generate a unique video ID using UUID
@@ -16,7 +16,7 @@ class CreateVideoView(View):
         Video.objects.create(video_id=video_id)
         return JsonResponse({'video_id': str(video_id)})
 
-@csrf_exempt
+
 class AddDataView(View):
     def post(self, request, video_id):
         try:
@@ -31,7 +31,7 @@ class AddDataView(View):
 
         return JsonResponse({'message': 'Data added successfully'})
 
-@csrf_exempt
+
 class CompleteJobView(View):
     def post(self, request, video_id):
         try:
@@ -49,7 +49,7 @@ class CompleteJobView(View):
         video.save()
         return JsonResponse({'message': 'Job completed successfully'})
 
-@csrf_exempt    
+    
 class CheckStatusView(View):
     def get(self, request, video_id):
         try:
