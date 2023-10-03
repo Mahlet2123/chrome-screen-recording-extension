@@ -25,35 +25,21 @@ class AddDataView(View):
         except Video.DoesNotExist:
             return JsonResponse({'error': 'Video not found'})
 
-        """     
+
         data_chunk = request.body
-        video_file_path = os.path.join(settings.MEDIA_ROOT, str(video.video_file))
-        # appends binary data chunks to a file. so to create a complete video file,
-        # you would need to follow a specific video encoding format and structure.
-        with open(video_file_path, 'ab') as video_file:
-            video_file.write(data_chunk)
+        if not data_chunk:
+            return JsonResponse({'message': 'Invalid Data'})
 
-        return JsonResponse({'message': 'Data added successfully'})
-        """
-        # Retrieve the JSON data from the request body
-        try:
-            json_data = request.json()
-        except Exception as e:
-            return JsonResponse({'error': 'Invalid JSON data'})
-        
-        # Extract the base64-encoded video chunk from the JSON
-        data_chunk_base64 = json_data.get('blob_data', '')
+        video_file_path = os.path.join(settings.MEDIA_ROOT, "videos/sample_video_chunk.bin")
 
-        # Decode the base64-encoded chunk to binary data
-        try:
-            data_chunk = base64.b64decode(data_chunk_base64)
-        except Exception as e:
-            return JsonResponse({'error': 'Invalid base64-encoded data'})
-
-        # Append the binary data chunk to the video file
-        video_file_path = os.path.join(settings.MEDIA_ROOT, str(video.video_file))
-        with open(video_file_path, 'ab') as video_file:
-            video_file.write(data_chunk)
+        # Create the video file with the first chunk received
+        if not os.path.exists(video_file_path):
+            with open(video_file_path, 'wb') as video_file:
+                video_file.write(data_chunk)
+        else:
+            # Append binary data chunks to the video file
+            with open(video_file_path, 'ab') as video_file:
+                video_file.write(data_chunk)
 
         return JsonResponse({'message': 'Data added successfully'})
 
